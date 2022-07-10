@@ -13,11 +13,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Install
-        run: go install
       - name: Format
         run: |
           go fmt
           git diff HEAD --exit-code
       - name: Unit test
         run: go test ./...
+      - name: Build
+        run: go build -o run_merged_step.out
