@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Format
+        run: |
+          go fmt
+          git diff HEAD --exit-code
+      - name: Unit test
+        run: go test ./...
+      - name: Build
+        run: go build -o run_merged_step.out
