@@ -20,7 +20,7 @@ go_library(
 )
 
 go_binary(
-    name = "run-merged-step",
+    name = "main",
     embed = [":main_lib"],
     visibility = ["//visibility:public"],
 )

@@ -19,8 +19,8 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&buildkiteJobId, "buildkiteJobId", "", "buildkite job id (required)")
-	rootCmd.MarkPersistentFlagRequired("buildkiteJobId")
+	rootCmd.PersistentFlags().StringVar(&buildkiteJobId, "buildkite-job-id", "", "buildkite job id (required)")
+	rootCmd.MarkPersistentFlagRequired("buildkite-job-id")
 }
 
 func Execute() {

@@ -1,0 +1,12 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "services_lib",
+    srcs = [
+        "fs.go",
+    ],
+    importpath = "github.com/fa93hws/run-merged-step/services",
+    visibility = ["//visibility:public"],
+    deps = [
+    ],
+)

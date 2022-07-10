@@ -4,13 +4,13 @@ go_library(
     name = "cmd_lib",
     srcs = [
         "common.go",
-        "fs.go",
         "prepare.go",
         "root.go",
     ],
     importpath = "github.com/fa93hws/run-merged-step/cmd",
     visibility = ["//visibility:public"],
     deps = [
+        "//services:services_lib",
         "@com_github_fatih_color//:go_default_library",
         "@com_github_spf13_cobra//:go_default_library",
     ],
