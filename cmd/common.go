@@ -5,6 +5,7 @@ import (
 	"path"
 
 	"github.com/fa93hws/run-merged-step/services"
+	"github.com/fatih/color"
 )
 
 var statusFileName = "merged_step_status.json"
@@ -18,10 +19,10 @@ type Status struct {
 
 type StatusManager struct {
 	filePath string
-	fs       services.FileService
+	fs       services.IFileService
 }
 
-func newStatusManager(buildkiteJobId string, fs services.FileService) *StatusManager {
+func newStatusManager(buildkiteJobId string, fs services.IFileService) *StatusManager {
 	filePath := path.Join(fs.TempDir(), buildkiteJobId, statusFileName)
 	return &StatusManager{filePath, fs}
 }
@@ -32,6 +33,7 @@ func (s *StatusManager) mkdir() {
 	if err != nil {
 		panic(err)
 	}
+	color.Green("dir created at %s", dir)
 }
 
 func (s *StatusManager) writeToFile(status []Status) {
@@ -39,4 +41,5 @@ func (s *StatusManager) writeToFile(status []Status) {
 	if err != nil {
 		panic(err)
 	}
+	color.Green("Status file created at %s", s.filePath)
 }

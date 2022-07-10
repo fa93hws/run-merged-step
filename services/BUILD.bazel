@@ -3,10 +3,12 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library")
 go_library(
     name = "services_lib",
     srcs = [
+        "buildkite.go",
         "fs.go",
     ],
     importpath = "github.com/fa93hws/run-merged-step/services",
     visibility = ["//visibility:public"],
     deps = [
+        "@com_github_fatih_color//:go_default_library",
     ],
 )
