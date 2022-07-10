@@ -1,0 +1,26 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
+gazelle(
+    name = "gazelle-update-repos",
+    args = [
+        "-from_file=go.mod",
+        "-to_macro=deps.bzl%go_dependencies",
+        "-prune",
+    ],
+    command = "update-repos",
+)
+
+go_library(
+    name = "main_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/fa93hws/run-merged-step",
+    visibility = ["//visibility:private"],
+    deps = ["//cmd:cmd_lib"],
+)
+
+go_binary(
+    name = "run-merged-step",
+    embed = [":main_lib"],
+    visibility = ["//visibility:public"],
+)

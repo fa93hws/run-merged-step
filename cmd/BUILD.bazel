@@ -1,0 +1,27 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "cmd_lib",
+    srcs = [
+        "common.go",
+        "fs.go",
+        "prepare.go",
+        "root.go",
+    ],
+    importpath = "github.com/fa93hws/run-merged-step/cmd",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_fatih_color//:go_default_library",
+        "@com_github_spf13_cobra//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "cmd_test",
+    srcs = ["prepare_test.go"],
+    embed = [":cmd_lib"],
+    deps = [
+        "@com_github_stretchr_testify//mock:go_default_library",
+        "@com_github_stretchr_testify//suite:go_default_library",
+    ],
+)

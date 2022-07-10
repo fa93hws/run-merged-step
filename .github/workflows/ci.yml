@@ -16,8 +16,12 @@ jobs:
       - name: Format
         run: |
           go fmt
-          git diff HEAD --exit-code
+          git diff HEAD --exit-code '*.go'
+      - name: Dependencies
+        run: |
+          bazel run //:gazelle-update-repos
+          git diff HEAD --exit-code WORKSPACE deps.bzl
       - name: Unit test
-        run: go test ./...
+        run: bazel test //...
       - name: Build
-        run: go build -o run_merged_step.out
+        run: bazel build //...
