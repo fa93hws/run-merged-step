@@ -19,9 +19,12 @@ go_library(
 
 go_test(
     name = "cmd_test",
-    srcs = ["prepare_test.go"],
+    srcs = ["prepare_test.go", "status_manager_test.go"],
+    data = glob(["fixtures/**/*.json"]),
     embed = [":cmd_lib"],
     deps = [
+        "//services:services_lib",
+        "@com_github_stretchr_testify//assert:go_default_library",
         "@com_github_stretchr_testify//mock:go_default_library",
         "@com_github_stretchr_testify//suite:go_default_library",
     ],

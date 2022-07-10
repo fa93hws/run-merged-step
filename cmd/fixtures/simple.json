@@ -1,0 +1,14 @@
+[
+  {
+    "label": "foo-label",
+    "key": "foo-key",
+    "exitCode": 0,
+    "autoRevertable": false
+  },
+  {
+    "label": "bar-label",
+    "key": "bar-key",
+    "exitCode": 0,
+    "autoRevertable": false
+  }
+]

@@ -11,10 +11,10 @@ import (
 var statusFileName = "merged_step_status.json"
 
 type Status struct {
-	label          string
-	key            string
-	exitCode       int
-	autoRevertable bool
+	Label          string `json:"label"`
+	Key            string `json:"key"`
+	ExitCode       int    `json:"exitCode"`
+	AutoRevertable bool   `json:"autoRevertable"`
 }
 
 type StatusManager struct {
@@ -36,7 +36,11 @@ func (s *StatusManager) mkdir() {
 }
 
 func (s *StatusManager) writeToFile(status []Status) {
-	err := s.fs.WriteFile(s.filePath, []byte("[]"), os.ModePerm)
+	data, err := json.Marshal(status)
+	if err != nil {
+		panic(err)
+	}
+	err = s.fs.WriteFile(s.filePath, data, os.ModePerm)
 	if err != nil {
 		panic(err)
 	}
