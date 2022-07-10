@@ -2,7 +2,7 @@ package services
 
 import "os"
 
-type FileSystem interface {
+type FileService interface {
 	TempDir() string
 	MkdirAll(name string, perm os.FileMode) error
 	WriteFile(name string, data []byte, perm os.FileMode) error
