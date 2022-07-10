@@ -2,12 +2,9 @@ package cmd
 
 import (
 	"github.com/fa93hws/run-merged-step/services"
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
-
-func init() {
-	rootCmd.AddCommand(prepareCmd)
-}
 
 var prepareCmd = &cobra.Command{
 	Use:   "prepare",
@@ -24,4 +21,5 @@ func prepare(jobId string, fs services.IFileService, buildkite services.IBuildki
 	statusManager := newStatusManager(jobId, fs)
 	statusManager.mkdir()
 	statusManager.writeToFile([]Status{})
+	color.Green("Status file created at %s", statusManager.filePath)
 }

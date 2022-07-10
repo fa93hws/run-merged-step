@@ -3,9 +3,10 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "cmd_lib",
     srcs = [
-        "common.go",
         "prepare.go",
+        "status_manager.go",
         "root.go",
+        "run.go",
     ],
     importpath = "github.com/fa93hws/run-merged-step/cmd",
     visibility = ["//visibility:public"],

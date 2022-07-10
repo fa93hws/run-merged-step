@@ -1,11 +1,11 @@
 package cmd
 
 import (
+	"encoding/json"
 	"os"
 	"path"
 
 	"github.com/fa93hws/run-merged-step/services"
-	"github.com/fatih/color"
 )
 
 var statusFileName = "merged_step_status.json"
@@ -33,7 +33,6 @@ func (s *StatusManager) mkdir() {
 	if err != nil {
 		panic(err)
 	}
-	color.Green("dir created at %s", dir)
 }
 
 func (s *StatusManager) writeToFile(status []Status) {
@@ -41,5 +40,20 @@ func (s *StatusManager) writeToFile(status []Status) {
 	if err != nil {
 		panic(err)
 	}
-	color.Green("Status file created at %s", s.filePath)
+}
+
+func (s *StatusManager) read() []Status {
+	data, err := s.fs.ReadFile(s.filePath)
+	if err != nil {
+		panic(err)
+	}
+	var statuses []Status
+	json.Unmarshal(data, &statuses)
+	return statuses
+}
+
+func (s *StatusManager) append(status Status) {
+	statuses := s.read()
+	statuses = append(statuses, status)
+	s.writeToFile(statuses)
 }

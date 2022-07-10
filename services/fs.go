@@ -4,8 +4,9 @@ import "os"
 
 type IFileService interface {
 	TempDir() string
-	MkdirAll(name string, perm os.FileMode) error
-	WriteFile(name string, data []byte, perm os.FileMode) error
+	MkdirAll(path string, perm os.FileMode) error
+	WriteFile(path string, data []byte, perm os.FileMode) error
+	ReadFile(path string) (content []byte, err error)
 }
 
 type OsFs struct{}
@@ -20,4 +21,8 @@ func (OsFs) WriteFile(name string, data []byte, perm os.FileMode) error {
 
 func (OsFs) TempDir() string {
 	return os.TempDir()
+}
+
+func (OsFs) ReadFile(path string) ([]byte, error) {
+	return os.ReadFile(path)
 }

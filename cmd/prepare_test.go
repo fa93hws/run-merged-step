@@ -27,6 +27,11 @@ func (m *MockedFs) TempDir() string {
 	return args.String(0)
 }
 
+func (m *MockedFs) ReadFile(name string) ([]byte, error) {
+	args := m.Called(name)
+	return args.Get(0).([]byte), args.Error(1)
+}
+
 type MockedBuildkite struct {
 	mock.Mock
 }
