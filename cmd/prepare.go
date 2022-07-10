@@ -10,16 +10,15 @@ var prepareCmd = &cobra.Command{
 	Use:   "prepare",
 	Short: "Preparation work for running merged step",
 	Run: func(cmd *cobra.Command, args []string) {
-		osFs := &services.OsFs{}
 		buildkite := services.NewBuildkite()
-		prepare(buildkiteJobId, osFs, buildkite)
+		statusManager := newStatusManager(buildkiteJobId, &services.OsFs{})
+		prepare(statusManager, buildkite)
 	},
 }
 
-func prepare(jobId string, fs services.IFileService, buildkite services.IBuildkite) {
+func prepare(statusManager IStatusManager, buildkite services.IBuildkite) {
 	buildkite.LogSection("Creating status file", false)
-	statusManager := newStatusManager(jobId, fs)
 	statusManager.mkdir()
 	statusManager.writeToFile([]Status{})
-	color.Green("Status file created at %s", statusManager.filePath)
+	color.Green("Status file created at %s", statusManager.getFilePath())
 }

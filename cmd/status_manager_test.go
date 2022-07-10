@@ -35,14 +35,6 @@ func (m *MockedFs) ReadFile(name string) ([]byte, error) {
 	return args.Get(0).([]byte), args.Error(1)
 }
 
-type MockedBuildkite struct {
-	mock.Mock
-}
-
-func (m *MockedBuildkite) LogSection(text string, collapse bool) {
-	m.Called(text, collapse)
-}
-
 type StatusManagerTestSuite struct {
 	suite.Suite
 	simpleStatus    []Status

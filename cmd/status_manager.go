@@ -17,6 +17,12 @@ type Status struct {
 	AutoRevertable bool   `json:"autoRevertable"`
 }
 
+type IStatusManager interface {
+	mkdir()
+	writeToFile(status []Status)
+	getFilePath() string
+}
+
 type StatusManager struct {
 	filePath string
 	fs       services.IFileService
@@ -25,6 +31,10 @@ type StatusManager struct {
 func newStatusManager(buildkiteJobId string, fs services.IFileService) *StatusManager {
 	filePath := path.Join(fs.TempDir(), buildkiteJobId, statusFileName)
 	return &StatusManager{filePath, fs}
+}
+
+func (s *StatusManager) getFilePath() string {
+	return s.filePath
 }
 
 func (s *StatusManager) mkdir() {
