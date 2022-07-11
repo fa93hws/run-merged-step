@@ -19,7 +19,7 @@ func (m *MockedStatusManager) writeToFile(status []Status) {
 	m.Called(status)
 }
 
-func (m *MockedStatusManager) getFilePath() string {
+func (m *MockedStatusManager) GetFilePath() string {
 	m.Called()
 	return ""
 }
@@ -46,7 +46,7 @@ func (suite *PrepareTestSuit) SetupSuite() {
 	suite.mockedStatusManager = &MockedStatusManager{}
 	suite.fakeMkDir = suite.mockedStatusManager.On("mkdir")
 	suite.fakeWrite = suite.mockedStatusManager.On("writeToFile", mock.Anything)
-	suite.fakeFilePath = suite.mockedStatusManager.On("getFilePath")
+	suite.fakeFilePath = suite.mockedStatusManager.On("GetFilePath")
 
 	suite.mockedBuildkite = &MockedBuildkite{}
 	suite.mockedBuildkite.On("LogSection", mock.Anything, mock.Anything)

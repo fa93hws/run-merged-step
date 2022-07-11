@@ -7,7 +7,10 @@ go_library(
         "fs.go",
     ],
     importpath = "github.com/fa93hws/run-merged-step/services",
-    visibility = ["//visibility:public"],
+    visibility = [
+        "//cmd:__pkg__",
+        "//e2e:__pkg__",
+    ],
     deps = [
         "@com_github_fatih_color//:go_default_library",
     ],

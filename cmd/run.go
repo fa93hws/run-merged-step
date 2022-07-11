@@ -66,6 +66,6 @@ func run(params RunParams, fs services.IFileService, buildkite services.IBuildki
 	elapsedTime := time.Since(startTime).Seconds()
 	buildkite.LogSection(fmt.Sprintf("%s Finished %s in %.2f seconds\n", icon, params.label, elapsedTime), false)
 	status := Status{Label: params.label, Key: params.key, ExitCode: exitCode, AutoRevertable: params.autoRevertable}
-	statusManager := newStatusManager(params.jobId, fs)
+	statusManager := NewStatusManager(params.jobId, fs)
 	statusManager.append(status)
 }

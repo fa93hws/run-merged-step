@@ -1,0 +1,30 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_test")
+
+sh_library(
+    name = "sh_fixtures",
+    srcs = [
+        "fixtures/fail.sh",
+        "fixtures/pass.sh",
+    ],
+    testonly = True,
+    visibility = ["//visibility:private"],
+)
+
+go_test(
+    name = "e2e_test",
+    srcs = ["e2e_test.go", "utils.go"],
+    data = [
+        "//:main",
+        ":sh_fixtures"
+    ],
+    env = {
+        "RUN_MERGED_STEP_BIN": "$(rootpath //:main)",
+        "BAZEL_E2E": "true",
+    },
+    deps = [
+        "//cmd:cmd_lib",
+        "//services:services_lib",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@com_github_stretchr_testify//suite:go_default_library",
+    ],
+)

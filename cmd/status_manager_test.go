@@ -76,7 +76,7 @@ func (suite *StatusManagerTestSuite) BeforeTest() {
 }
 
 func (suite *StatusManagerTestSuite) TestStatusFilePath() {
-	manager := newStatusManager("job-id", suite.fs)
+	manager := NewStatusManager("job-id", suite.fs)
 	assert.Equal(suite.T(), "/tmp/job-id/merged_step_status.json", manager.filePath)
 }
 
@@ -108,7 +108,7 @@ func (suite *StatusManagerTestSuite) TestWriteStatus() {
 
 func (suite *StatusManagerTestSuite) TestReadStatus() {
 	manager := StatusManager{"/tmp/job-id/merged_step_status.json", suite.fs}
-	statuses := manager.read()
+	statuses := manager.Read()
 	assert.Equal(suite.T(), suite.simpleStatus, statuses)
 	suite.fs.AssertCalled(suite.T(), "ReadFile", "/tmp/job-id/merged_step_status.json")
 }

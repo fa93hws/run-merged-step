@@ -20,7 +20,7 @@ type Status struct {
 type IStatusManager interface {
 	mkdir()
 	writeToFile(status []Status)
-	getFilePath() string
+	GetFilePath() string
 }
 
 type StatusManager struct {
@@ -28,12 +28,12 @@ type StatusManager struct {
 	fs       services.IFileService
 }
 
-func newStatusManager(buildkiteJobId string, fs services.IFileService) *StatusManager {
+func NewStatusManager(buildkiteJobId string, fs services.IFileService) *StatusManager {
 	filePath := path.Join(fs.TempDir(), buildkiteJobId, statusFileName)
 	return &StatusManager{filePath, fs}
 }
 
-func (s *StatusManager) getFilePath() string {
+func (s *StatusManager) GetFilePath() string {
 	return s.filePath
 }
 
@@ -56,7 +56,7 @@ func (s *StatusManager) writeToFile(status []Status) {
 	}
 }
 
-func (s *StatusManager) read() []Status {
+func (s *StatusManager) Read() []Status {
 	data, err := s.fs.ReadFile(s.filePath)
 	if err != nil {
 		panic(err)
@@ -67,7 +67,7 @@ func (s *StatusManager) read() []Status {
 }
 
 func (s *StatusManager) append(status Status) {
-	statuses := s.read()
+	statuses := s.Read()
 	statuses = append(statuses, status)
 	s.writeToFile(statuses)
 }
