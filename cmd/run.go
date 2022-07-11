@@ -46,7 +46,9 @@ func run(params RunParams, statusManager IStatusManager, logger services.ILogger
 	logger.LogSection(fmt.Sprintf("Running %s", params.label), false)
 	startTime := time.Now()
 	commands := params.commands
-	exitCode := exec.Run(commands[0], commands[1:], nil)
+	exitCode := exec.Run(commands[0], commands[1:], nil, &map[string]string{
+		"DISABLE_UPLOAD_AUTO_REVERT_SIGNAL_FILE": "true",
+	})
 
 	var icon string
 	if exitCode == 0 {

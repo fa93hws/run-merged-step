@@ -23,7 +23,7 @@ func (suite *E2ETestSuite) SetupSuite() {
 	currentDir, _ := os.Getwd()
 	suite.tempDir = path.Join(currentDir, "fixtures", "temp")
 	suite.binPath = getBinaryPath()
-	suite.passScript = path.Join(currentDir, "fixtures", "pass.sh")
+	suite.passScript = path.Join(currentDir, "fixtures", "pass_when_env_is_set.sh")
 	suite.failScript = path.Join(currentDir, "fixtures", "fail.sh")
 	os.RemoveAll(suite.tempDir)
 }

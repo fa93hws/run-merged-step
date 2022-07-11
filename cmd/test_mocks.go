@@ -58,8 +58,8 @@ type MockedExecService struct {
 	mock.Mock
 }
 
-func (m *MockedExecService) Run(program string, programArgs []string, cwd *string) int {
-	args := m.Called(program, programArgs, cwd)
+func (m *MockedExecService) Run(program string, programArgs []string, cwd *string, env *map[string]string) int {
+	args := m.Called(program, programArgs, cwd, env)
 	return args.Int(0)
 }
 
