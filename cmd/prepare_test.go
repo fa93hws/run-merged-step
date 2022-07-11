@@ -21,17 +21,13 @@ type PrepareTestSuit struct {
 
 func (suite *PrepareTestSuit) SetupSuite() {
 	suite.mockedStatusManager = &MockedStatusManager{}
-	suite.fakeMkDir = suite.mockedStatusManager.On("mkdir")
-	suite.fakeWrite = suite.mockedStatusManager.On("writeToFile", mock.Anything)
-	suite.fakeFilePath = suite.mockedStatusManager.On("GetFilePath")
-
 	suite.fakeLogger = &services.FakeLogger{}
 }
 
-func (suite *PrepareTestSuit) BeforeTest() {
-	suite.fakeMkDir.Unset()
-	suite.fakeWrite.Unset()
-	suite.fakeFilePath.Unset()
+func (suite *PrepareTestSuit) SetupTest() {
+	suite.fakeMkDir = suite.mockedStatusManager.On("mkdir")
+	suite.fakeWrite = suite.mockedStatusManager.On("writeToFile", mock.Anything)
+	suite.fakeFilePath = suite.mockedStatusManager.On("GetFilePath")
 }
 
 func (suite *PrepareTestSuit) TestPrepareToWriteEmptyFile() {

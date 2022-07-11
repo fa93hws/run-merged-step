@@ -35,20 +35,14 @@ func (suite *StatusManagerTestSuite) SetupSuite() {
 	if err != nil {
 		panic(err)
 	}
-
-	mockFs := &MockedFs{}
-	suite.fakeTempDir = mockFs.On("TempDir").Return("/tmp")
-	suite.fakeMkDir = mockFs.On("MkdirAll", mock.Anything, mock.Anything).Return(nil)
-	suite.fakeWrite = mockFs.On("WriteFile", mock.Anything, mock.Anything, mock.Anything).Return(nil)
-	suite.fakeReadFile = mockFs.On("ReadFile", mock.Anything).Return(suite.realStatusBytes, nil)
-	suite.fs = mockFs
+	suite.fs = &MockedFs{}
 }
 
-func (suite *StatusManagerTestSuite) BeforeTest() {
-	suite.fakeTempDir.Unset()
-	suite.fakeMkDir.Unset()
-	suite.fakeWrite.Unset()
-	suite.fakeReadFile.Unset()
+func (suite *StatusManagerTestSuite) SetupTest() {
+	suite.fakeTempDir = suite.fs.On("TempDir").Return("/tmp")
+	suite.fakeMkDir = suite.fs.On("MkdirAll", mock.Anything, mock.Anything).Return(nil)
+	suite.fakeWrite = suite.fs.On("WriteFile", mock.Anything, mock.Anything, mock.Anything).Return(nil)
+	suite.fakeReadFile = suite.fs.On("ReadFile", mock.Anything).Return(suite.realStatusBytes, nil)
 }
 
 func (suite *StatusManagerTestSuite) TestStatusFilePath() {
