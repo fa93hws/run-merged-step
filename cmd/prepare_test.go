@@ -10,13 +10,9 @@ import (
 
 type PrepareTestSuit struct {
 	suite.Suite
+
 	mockedStatusManager *MockedStatusManager
-
-	fakeMkDir    *mock.Call
-	fakeWrite    *mock.Call
-	fakeFilePath *mock.Call
-
-	fakeLogger services.ILogger
+	fakeLogger          services.ILogger
 }
 
 func (suite *PrepareTestSuit) SetupSuite() {
@@ -25,9 +21,9 @@ func (suite *PrepareTestSuit) SetupSuite() {
 }
 
 func (suite *PrepareTestSuit) SetupTest() {
-	suite.fakeMkDir = suite.mockedStatusManager.On("mkdir")
-	suite.fakeWrite = suite.mockedStatusManager.On("writeToFile", mock.Anything)
-	suite.fakeFilePath = suite.mockedStatusManager.On("GetFilePath")
+	suite.mockedStatusManager.On("mkdir")
+	suite.mockedStatusManager.On("writeToFile", mock.Anything)
+	suite.mockedStatusManager.On("GetFilePath")
 }
 
 func (suite *PrepareTestSuit) TestPrepareToWriteEmptyFile() {

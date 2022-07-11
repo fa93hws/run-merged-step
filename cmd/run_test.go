@@ -11,14 +11,9 @@ import (
 type RunCommandTestSuite struct {
 	suite.Suite
 
-	mockedExecService *MockedExecService
-	fakeRun           *mock.Call
-
+	mockedExecService   *MockedExecService
 	mockedStatusManager *MockedStatusManager
-	fakeAppend          *mock.Call
-
-	mockedLogger   *MockedLogger
-	fakeLogSection *mock.Call
+	mockedLogger        *MockedLogger
 }
 
 func (suite *RunCommandTestSuite) SetupSuite() {
@@ -28,15 +23,12 @@ func (suite *RunCommandTestSuite) SetupSuite() {
 }
 
 func (suite *RunCommandTestSuite) SetupTest() {
-	suite.fakeAppend = suite.mockedStatusManager.On("append", mock.Anything)
-	suite.fakeLogSection = suite.mockedLogger.On("LogSection", mock.Anything, mock.Anything)
-	if suite.fakeRun != nil {
-		suite.fakeRun.Unset()
-	}
+	suite.mockedStatusManager.On("append", mock.Anything)
+	suite.mockedLogger.On("LogSection", mock.Anything, mock.Anything)
 }
 
 func (suite *RunCommandTestSuite) TestRunCommandExitZero() {
-	suite.fakeRun = suite.mockedExecService.On("Run", mock.Anything, mock.Anything).Return(0)
+	suite.mockedExecService.On("Run", mock.Anything, mock.Anything).Return(0).Once()
 	run(RunParams{
 		label:          "foo-label",
 		key:            "foo-key",
@@ -56,7 +48,7 @@ func (suite *RunCommandTestSuite) TestRunCommandExitZero() {
 }
 
 func (suite *RunCommandTestSuite) TestRunCommandExitNonZero() {
-	suite.fakeRun = suite.mockedExecService.On("Run", mock.Anything, mock.Anything).Return(3)
+	suite.mockedExecService.On("Run", mock.Anything, mock.Anything).Return(3).Once()
 	run(RunParams{
 		label:          "bar-label",
 		key:            "bar-key",

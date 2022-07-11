@@ -15,12 +15,8 @@ type StatusManagerTestSuite struct {
 	suite.Suite
 	simpleStatus    []Status
 	realStatusBytes []byte
-	fs              *MockedFs
 
-	fakeTempDir  *mock.Call
-	fakeMkDir    *mock.Call
-	fakeWrite    *mock.Call
-	fakeReadFile *mock.Call
+	mockedFs *MockedFs
 }
 
 func (suite *StatusManagerTestSuite) SetupSuite() {
@@ -35,36 +31,36 @@ func (suite *StatusManagerTestSuite) SetupSuite() {
 	if err != nil {
 		panic(err)
 	}
-	suite.fs = &MockedFs{}
+	suite.mockedFs = &MockedFs{}
 }
 
 func (suite *StatusManagerTestSuite) SetupTest() {
-	suite.fakeTempDir = suite.fs.On("TempDir").Return("/tmp")
-	suite.fakeMkDir = suite.fs.On("MkdirAll", mock.Anything, mock.Anything).Return(nil)
-	suite.fakeWrite = suite.fs.On("WriteFile", mock.Anything, mock.Anything, mock.Anything).Return(nil)
-	suite.fakeReadFile = suite.fs.On("ReadFile", mock.Anything).Return(suite.realStatusBytes, nil)
+	suite.mockedFs.On("TempDir").Return("/tmp")
+	suite.mockedFs.On("MkdirAll", mock.Anything, mock.Anything).Return(nil)
+	suite.mockedFs.On("WriteFile", mock.Anything, mock.Anything, mock.Anything).Return(nil)
+	suite.mockedFs.On("ReadFile", mock.Anything).Return(suite.realStatusBytes, nil)
 }
 
 func (suite *StatusManagerTestSuite) TestStatusFilePath() {
-	manager := NewStatusManager("job-id", suite.fs)
+	manager := NewStatusManager("job-id", suite.mockedFs)
 	assert.Equal(suite.T(), "/tmp/job-id/merged_step_status.json", manager.filePath)
 }
 
 func (suite *StatusManagerTestSuite) TestMkDir() {
-	manager := StatusManager{"/tmp/job-id/merged_step_status.json", suite.fs}
+	manager := StatusManager{"/tmp/job-id/merged_step_status.json", suite.mockedFs}
 	manager.mkdir()
-	suite.fs.AssertCalled(suite.T(), "MkdirAll", "/tmp/job-id", os.ModePerm)
+	suite.mockedFs.AssertCalled(suite.T(), "MkdirAll", "/tmp/job-id", os.ModePerm)
 }
 
 func (suite *StatusManagerTestSuite) TestWriteEmptyStatus() {
-	manager := StatusManager{"/tmp/job-id/merged_step_status.json", suite.fs}
+	manager := StatusManager{"/tmp/job-id/merged_step_status.json", suite.mockedFs}
 	emptyStatuses := []Status{}
 	manager.writeToFile(emptyStatuses)
-	suite.fs.AssertCalled(suite.T(), "WriteFile", "/tmp/job-id/merged_step_status.json", []byte("[]"), os.ModePerm)
+	suite.mockedFs.AssertCalled(suite.T(), "WriteFile", "/tmp/job-id/merged_step_status.json", []byte("[]"), os.ModePerm)
 }
 
 func (suite *StatusManagerTestSuite) TestWriteStatus() {
-	manager := StatusManager{"/tmp/job-id/merged_step_status.json", suite.fs}
+	manager := StatusManager{"/tmp/job-id/merged_step_status.json", suite.mockedFs}
 	statuses := []Status{{
 		Label:          "label-0",
 		Key:            "key-0",
@@ -73,14 +69,14 @@ func (suite *StatusManagerTestSuite) TestWriteStatus() {
 	}}
 	jsonBytes := []byte("[{\"label\":\"label-0\",\"key\":\"key-0\",\"exitCode\":0,\"autoRevertable\":false}]")
 	manager.writeToFile(statuses)
-	suite.fs.AssertCalled(suite.T(), "WriteFile", "/tmp/job-id/merged_step_status.json", jsonBytes, os.ModePerm)
+	suite.mockedFs.AssertCalled(suite.T(), "WriteFile", "/tmp/job-id/merged_step_status.json", jsonBytes, os.ModePerm)
 }
 
 func (suite *StatusManagerTestSuite) TestReadStatus() {
-	manager := StatusManager{"/tmp/job-id/merged_step_status.json", suite.fs}
+	manager := StatusManager{"/tmp/job-id/merged_step_status.json", suite.mockedFs}
 	statuses := manager.Read()
 	assert.Equal(suite.T(), suite.simpleStatus, statuses)
-	suite.fs.AssertCalled(suite.T(), "ReadFile", "/tmp/job-id/merged_step_status.json")
+	suite.mockedFs.AssertCalled(suite.T(), "ReadFile", "/tmp/job-id/merged_step_status.json")
 }
 
 func (suite *StatusManagerTestSuite) TestAppendStatus() {
@@ -92,14 +88,14 @@ func (suite *StatusManagerTestSuite) TestAppendStatus() {
 	}
 	expectedStatus := append(suite.simpleStatus, newStatus)
 	expectedJsonBytes, _ := json.Marshal(expectedStatus)
-	manager := StatusManager{"/tmp/job-id/merged_step_status.json", suite.fs}
+	manager := StatusManager{"/tmp/job-id/merged_step_status.json", suite.mockedFs}
 	manager.append(Status{
 		Label:          "l",
 		Key:            "k",
 		ExitCode:       0,
 		AutoRevertable: false,
 	})
-	suite.fs.AssertCalled(suite.T(), "WriteFile", "/tmp/job-id/merged_step_status.json", expectedJsonBytes, os.ModePerm)
+	suite.mockedFs.AssertCalled(suite.T(), "WriteFile", "/tmp/job-id/merged_step_status.json", expectedJsonBytes, os.ModePerm)
 }
 
 func TestStatusManagerTestSuite(t *testing.T) {
