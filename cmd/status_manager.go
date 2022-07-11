@@ -23,6 +23,7 @@ type IStatusManager interface {
 	GetFilePath() string
 	append(status Status)
 	Read() []Status
+	remove()
 }
 
 type StatusManager struct {
@@ -72,4 +73,11 @@ func (s *StatusManager) append(status Status) {
 	statuses := s.Read()
 	statuses = append(statuses, status)
 	s.writeToFile(statuses)
+}
+
+func (s *StatusManager) remove() {
+	err := s.fs.RemoveAll(s.filePath)
+	if err != nil {
+		panic(err)
+	}
 }

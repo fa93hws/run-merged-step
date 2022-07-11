@@ -38,6 +38,7 @@ func (suite *StatusManagerTestSuite) SetupTest() {
 	suite.mockedFs.On("MkdirAll", mock.Anything, mock.Anything).Return(nil)
 	suite.mockedFs.On("WriteFile", mock.Anything, mock.Anything, mock.Anything).Return(nil)
 	suite.mockedFs.On("ReadFile", mock.Anything).Return(suite.realStatusBytes, nil)
+	suite.mockedFs.On("RemoveAll", mock.Anything).Return(nil)
 }
 
 func (suite *StatusManagerTestSuite) TestStatusFilePath() {
@@ -106,6 +107,12 @@ func (suite *StatusManagerTestSuite) TestAppendStatus() {
 		AutoRevertable: false,
 	})
 	suite.mockedFs.AssertCalled(suite.T(), "WriteFile", "/tmp/job-id/merged_step_status.json", expectedJsonBytes, os.ModePerm)
+}
+
+func (suite *StatusManagerTestSuite) TestRemove() {
+	manager := StatusManager{"/tmp/job-id/merged_step_status.json", suite.mockedFs}
+	manager.remove()
+	suite.mockedFs.AssertCalled(suite.T(), "RemoveAll", "/tmp/job-id/merged_step_status.json")
 }
 
 func TestStatusManagerTestSuite(t *testing.T) {

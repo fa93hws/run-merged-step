@@ -27,6 +27,8 @@ type ReportTestSuite struct {
 
 func (suite *ReportTestSuite) SetupTest() {
 	suite.mockedStatusManager = &MockedStatusManager{}
+	suite.mockedStatusManager.On("remove").Return()
+
 	suite.mockedLogger = &MockedLogger{}
 	suite.mockedLogger.On("LogSection", mock.Anything, mock.Anything).Return()
 	suite.mockedLogger.On("LogInfo", mock.Anything).Return()
@@ -98,6 +100,15 @@ func (suite *ReportTestSuite) TestSomeNonAutoRevertableCommandsFailButAutoRevert
 	suite.Equal(1, exitCode)
 	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", ":bk-status-failed: Some steps failed", false)
 	suite.mockedExecService.AssertCalled(suite.T(), "Run", "upload_auto_revert_signal", []string{"passed"}, (*string)(nil), (*map[string]string)(nil))
+}
+
+func (suite *ReportTestSuite) TestRemoveStatusFile() {
+	statuses := []Status{
+		createDummyStatus("command1", 0, false),
+	}
+	suite.mockedStatusManager.On("Read").Return(statuses).Once()
+	report(suite.mockedStatusManager, "upload_auto_revert_signal", suite.mockedLogger, suite.mockedExecService)
+	suite.mockedStatusManager.AssertCalled(suite.T(), "remove")
 }
 
 func TestReportTestSuite(t *testing.T) {

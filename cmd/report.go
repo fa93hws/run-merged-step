@@ -76,6 +76,7 @@ func report(statusManager IStatusManager, autoRevertableScriptPath string, logge
 	logger.LogSection("Print status file", true)
 	jsonBytes, _ := json.MarshalIndent(statuses, "", "  ")
 	logger.LogInfo(string(jsonBytes))
+	statusManager.remove()
 
 	if len(failed) > 0 {
 		return 1

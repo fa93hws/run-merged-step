@@ -33,6 +33,10 @@ func (m *MockedStatusManager) Read() []Status {
 	return args.Get(0).([]Status)
 }
 
+func (m *MockedStatusManager) remove() {
+	m.Called()
+}
+
 // fs
 type MockedFs struct {
 	mock.Mock
@@ -56,6 +60,11 @@ func (m *MockedFs) TempDir() string {
 func (m *MockedFs) ReadFile(name string) ([]byte, error) {
 	args := m.Called(name)
 	return args.Get(0).([]byte), args.Error(1)
+}
+
+func (m *MockedFs) RemoveAll(name string) error {
+	args := m.Called(name)
+	return args.Error(0)
 }
 
 // exec
