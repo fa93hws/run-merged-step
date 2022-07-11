@@ -6,21 +6,21 @@ import (
 	"github.com/fatih/color"
 )
 
-type IBuildkite interface {
+type ILogger interface {
 	LogSection(string, bool)
 }
 
-type Buildkite struct {
+type Logger struct {
 	isOnBuildkite bool
 }
 
-func NewBuildkite() *Buildkite {
+func NewLogger() *Logger {
 	env := os.Getenv("BUILDKITE")
 	isOnBuildkite := env == "true"
-	return &Buildkite{isOnBuildkite}
+	return &Logger{isOnBuildkite}
 }
 
-func (b Buildkite) LogSection(text string, collapsed bool) {
+func (b Logger) LogSection(text string, collapsed bool) {
 	sprintf := color.New(color.Bold, color.FgMagenta).SprintfFunc()
 	if !b.isOnBuildkite {
 		print(sprintf("%s\n", text))
@@ -34,3 +34,7 @@ func (b Buildkite) LogSection(text string, collapsed bool) {
 	}
 	print(section + " " + sprintf("%s\n", text))
 }
+
+type FakeLogger struct{}
+
+func (f FakeLogger) LogSection(text string, collapsed bool) {}

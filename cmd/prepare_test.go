@@ -3,6 +3,7 @@ package cmd
 import (
 	"testing"
 
+	"github.com/fa93hws/run-merged-step/services"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
@@ -24,22 +25,15 @@ func (m *MockedStatusManager) GetFilePath() string {
 	return ""
 }
 
-type MockedBuildkite struct {
-	mock.Mock
-}
-
-func (m *MockedBuildkite) LogSection(text string, collapse bool) {
-	m.Called(text, collapse)
-}
-
 type PrepareTestSuit struct {
 	suite.Suite
 	mockedStatusManager *MockedStatusManager
-	mockedBuildkite     *MockedBuildkite
 
 	fakeMkDir    *mock.Call
 	fakeWrite    *mock.Call
 	fakeFilePath *mock.Call
+
+	fakeLogger services.ILogger
 }
 
 func (suite *PrepareTestSuit) SetupSuite() {
@@ -48,8 +42,7 @@ func (suite *PrepareTestSuit) SetupSuite() {
 	suite.fakeWrite = suite.mockedStatusManager.On("writeToFile", mock.Anything)
 	suite.fakeFilePath = suite.mockedStatusManager.On("GetFilePath")
 
-	suite.mockedBuildkite = &MockedBuildkite{}
-	suite.mockedBuildkite.On("LogSection", mock.Anything, mock.Anything)
+	suite.fakeLogger = &services.FakeLogger{}
 }
 
 func (suite *PrepareTestSuit) BeforeTest() {
@@ -59,7 +52,7 @@ func (suite *PrepareTestSuit) BeforeTest() {
 }
 
 func (suite *PrepareTestSuit) TestPrepareToWriteEmptyFile() {
-	prepare(suite.mockedStatusManager, suite.mockedBuildkite)
+	prepare(suite.mockedStatusManager, suite.fakeLogger)
 	suite.mockedStatusManager.AssertCalled(suite.T(), "mkdir")
 	suite.mockedStatusManager.AssertCalled(suite.T(), "writeToFile", []Status{})
 }

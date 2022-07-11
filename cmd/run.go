@@ -27,8 +27,8 @@ var (
 		Short: "Run the CI step as a command",
 		Run: func(cmd *cobra.Command, args []string) {
 			osFs := &services.OsFs{}
-			buildkite := services.NewBuildkite()
-			run(RunParams{label, key, buildkiteJobId, autoRevertable, args}, osFs, buildkite)
+			logger := services.NewLogger()
+			run(RunParams{label, key, buildkiteJobId, autoRevertable, args}, osFs, logger)
 		},
 	}
 )
@@ -40,11 +40,11 @@ func init() {
 	runCmd.MarkFlagsRequiredTogether("label", "key")
 }
 
-func run(params RunParams, fs services.IFileService, buildkite services.IBuildkite) {
+func run(params RunParams, fs services.IFileService, logger services.ILogger) {
 	if len(params.commands) == 0 {
 		panic("need commands to run")
 	}
-	buildkite.LogSection(fmt.Sprintf("Running %s", params.label), false)
+	logger.LogSection(fmt.Sprintf("Running %s", params.label), false)
 	startTime := time.Now()
 	commands := params.commands
 	cmd := exec.Command(commands[0], commands[1:]...)
@@ -64,7 +64,7 @@ func run(params RunParams, fs services.IFileService, buildkite services.IBuildki
 		}
 	}
 	elapsedTime := time.Since(startTime).Seconds()
-	buildkite.LogSection(fmt.Sprintf("%s Finished %s in %.2f seconds\n", icon, params.label, elapsedTime), false)
+	logger.LogSection(fmt.Sprintf("%s Finished %s in %.2f seconds\n", icon, params.label, elapsedTime), false)
 	status := Status{Label: params.label, Key: params.key, ExitCode: exitCode, AutoRevertable: params.autoRevertable}
 	statusManager := NewStatusManager(params.jobId, fs)
 	statusManager.append(status)
