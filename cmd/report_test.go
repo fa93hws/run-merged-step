@@ -29,6 +29,7 @@ func (suite *ReportTestSuite) SetupTest() {
 	suite.mockedStatusManager = &MockedStatusManager{}
 	suite.mockedLogger = &MockedLogger{}
 	suite.mockedLogger.On("LogSection", mock.Anything, mock.Anything).Return()
+	suite.mockedLogger.On("LogInfo", mock.Anything).Return()
 
 	suite.mockedExecService = &MockedExecService{}
 	suite.mockedExecService.On("Run", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(0)

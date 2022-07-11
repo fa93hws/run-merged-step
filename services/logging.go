@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/fatih/color"
@@ -8,6 +9,7 @@ import (
 
 type ILogger interface {
 	LogSection(string, bool)
+	LogInfo(string)
 }
 
 type Logger struct {
@@ -23,7 +25,7 @@ func NewLogger() *Logger {
 func (b Logger) LogSection(text string, collapsed bool) {
 	sprintf := color.New(color.Bold, color.FgMagenta).SprintfFunc()
 	if !b.isOnBuildkite {
-		print(sprintf("%s\n", text))
+		fmt.Fprintln(os.Stderr, sprintf("%s\n", text))
 		return
 	}
 	var section string
@@ -32,9 +34,14 @@ func (b Logger) LogSection(text string, collapsed bool) {
 	} else {
 		section = "+++"
 	}
-	print(section + " " + sprintf("%s\n", text))
+	fmt.Fprintf(os.Stderr, "%s %s", section, sprintf("%s\n", text))
+}
+
+func (b Logger) LogInfo(text string) {
+	fmt.Fprintln(os.Stderr, text)
 }
 
 type FakeLogger struct{}
 
-func (f FakeLogger) LogSection(text string, collapsed bool) {}
+func (f FakeLogger) LogSection(string, bool) {}
+func (f FakeLogger) LogInfo(string)          {}

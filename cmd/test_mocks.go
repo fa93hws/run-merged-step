@@ -76,3 +76,7 @@ type MockedLogger struct {
 func (m *MockedLogger) LogSection(text string, collapse bool) {
 	m.Called(text, collapse)
 }
+
+func (m *MockedLogger) LogInfo(text string) {
+	m.Called(text)
+}

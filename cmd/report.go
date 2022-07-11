@@ -52,7 +52,7 @@ func printResult(failedStatuses []Status, logger services.ILogger) {
 	}
 	logger.LogSection(":bk-status-failed: Some steps failed", false)
 	for _, failedStatus := range failedStatuses {
-		fmt.Printf("%s failed with exit code=%d\n", failedStatus.Label, failedStatus.ExitCode)
+		logger.LogInfo(fmt.Sprintf("%s failed with exit code=%d\n", failedStatus.Label, failedStatus.ExitCode))
 	}
 }
 
@@ -75,7 +75,7 @@ func report(statusManager IStatusManager, autoRevertableScriptPath string, logge
 
 	logger.LogSection("Print status file", true)
 	jsonBytes, _ := json.MarshalIndent(statuses, "", "  ")
-	fmt.Println(string(jsonBytes))
+	logger.LogInfo(string(jsonBytes))
 
 	if len(failed) > 0 {
 		return 1
