@@ -47,7 +47,7 @@ func (s *StatusManager) mkdir() {
 }
 
 func (s *StatusManager) writeToFile(status []Status) {
-	data, err := json.Marshal(status)
+	data, err := json.MarshalIndent(status, "", "  ")
 	if err != nil {
 		panic(err)
 	}

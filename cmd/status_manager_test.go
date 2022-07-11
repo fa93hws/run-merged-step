@@ -31,11 +31,10 @@ func (suite *StatusManagerTestSuite) SetupSuite() {
 	if err != nil {
 		panic(err)
 	}
-	suite.mockedFs = &MockedFs{}
 }
 
 func (suite *StatusManagerTestSuite) SetupTest() {
-	suite.mockedFs.On("TempDir").Return("/tmp")
+	suite.mockedFs = &MockedFs{}
 	suite.mockedFs.On("MkdirAll", mock.Anything, mock.Anything).Return(nil)
 	suite.mockedFs.On("WriteFile", mock.Anything, mock.Anything, mock.Anything).Return(nil)
 	suite.mockedFs.On("ReadFile", mock.Anything).Return(suite.realStatusBytes, nil)
@@ -67,9 +66,20 @@ func (suite *StatusManagerTestSuite) TestWriteStatus() {
 		ExitCode:       0,
 		AutoRevertable: false,
 	}}
-	jsonBytes := []byte("[{\"label\":\"label-0\",\"key\":\"key-0\",\"exitCode\":0,\"autoRevertable\":false}]")
+	expectedJsonStr := `[
+  {
+    "label": "label-0",
+    "key": "key-0",
+    "exitCode": 0,
+    "autoRevertable": false
+  }
+]`
 	manager.writeToFile(statuses)
-	suite.mockedFs.AssertCalled(suite.T(), "WriteFile", "/tmp/job-id/merged_step_status.json", jsonBytes, os.ModePerm)
+	suite.mockedFs.AssertCalled(suite.T(), "WriteFile", "/tmp/job-id/merged_step_status.json", mock.MatchedBy(func(jsonBytes []byte) bool {
+		receivedJsonStr := string(jsonBytes)
+		assert.Equal(suite.T(), expectedJsonStr, receivedJsonStr)
+		return true
+	}), os.ModePerm)
 }
 
 func (suite *StatusManagerTestSuite) TestReadStatus() {
@@ -87,7 +97,7 @@ func (suite *StatusManagerTestSuite) TestAppendStatus() {
 		AutoRevertable: false,
 	}
 	expectedStatus := append(suite.simpleStatus, newStatus)
-	expectedJsonBytes, _ := json.Marshal(expectedStatus)
+	expectedJsonBytes, _ := json.MarshalIndent(expectedStatus, "", "  ")
 	manager := StatusManager{"/tmp/job-id/merged_step_status.json", suite.mockedFs}
 	manager.append(Status{
 		Label:          "l",

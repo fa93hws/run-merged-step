@@ -15,12 +15,9 @@ type PrepareTestSuit struct {
 	fakeLogger          services.ILogger
 }
 
-func (suite *PrepareTestSuit) SetupSuite() {
+func (suite *PrepareTestSuit) SetupTest() {
 	suite.mockedStatusManager = &MockedStatusManager{}
 	suite.fakeLogger = &services.FakeLogger{}
-}
-
-func (suite *PrepareTestSuit) SetupTest() {
 	suite.mockedStatusManager.On("mkdir")
 	suite.mockedStatusManager.On("writeToFile", mock.Anything)
 	suite.mockedStatusManager.On("GetFilePath")

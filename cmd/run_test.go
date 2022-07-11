@@ -16,14 +16,13 @@ type RunCommandTestSuite struct {
 	mockedLogger        *MockedLogger
 }
 
-func (suite *RunCommandTestSuite) SetupSuite() {
-	suite.mockedExecService = &MockedExecService{}
-	suite.mockedStatusManager = &MockedStatusManager{}
-	suite.mockedLogger = &MockedLogger{}
-}
-
 func (suite *RunCommandTestSuite) SetupTest() {
+	suite.mockedExecService = &MockedExecService{}
+
+	suite.mockedStatusManager = &MockedStatusManager{}
 	suite.mockedStatusManager.On("append", mock.Anything)
+
+	suite.mockedLogger = &MockedLogger{}
 	suite.mockedLogger.On("LogSection", mock.Anything, mock.Anything)
 }
 
