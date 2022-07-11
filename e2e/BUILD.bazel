@@ -5,6 +5,7 @@ sh_library(
     srcs = [
         "fixtures/fail.sh",
         "fixtures/pass_when_env_is_set.sh",
+        "fixtures/upload_auto_revert_signal.sh",
     ],
     testonly = True,
     visibility = ["//visibility:private"],

@@ -86,6 +86,19 @@ func (suite *ReportTestSuite) TestSomeAutoRevertableCommandsFail() {
 	suite.mockedExecService.AssertCalled(suite.T(), "Run", "upload_auto_revert_signal", []string{"failed"}, (*string)(nil), (*map[string]string)(nil))
 }
 
+func (suite *ReportTestSuite) TestSomeNonAutoRevertableCommandsFailButAutoRevertableCommandsPass() {
+	statuses := []Status{
+		createDummyStatus("command1", 1, false),
+		createDummyStatus("command2", 0, true),
+		createDummyStatus("command3", 2, false),
+	}
+	suite.mockedStatusManager.On("Read").Return(statuses).Once()
+	exitCode := report(suite.mockedStatusManager, "upload_auto_revert_signal", suite.mockedLogger, suite.mockedExecService)
+	suite.Equal(1, exitCode)
+	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", ":bk-status-failed: Some steps failed", false)
+	suite.mockedExecService.AssertCalled(suite.T(), "Run", "upload_auto_revert_signal", []string{"passed"}, (*string)(nil), (*map[string]string)(nil))
+}
+
 func TestReportTestSuite(t *testing.T) {
 	suite.Run(t, new(ReportTestSuite))
 }
