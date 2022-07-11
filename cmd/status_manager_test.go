@@ -11,30 +11,6 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type MockedFs struct {
-	mock.Mock
-}
-
-func (m *MockedFs) MkdirAll(name string, perm os.FileMode) error {
-	args := m.Called(name, perm)
-	return args.Error(0)
-}
-
-func (m *MockedFs) WriteFile(name string, data []byte, perm os.FileMode) error {
-	args := m.Called(name, data, perm)
-	return args.Error(0)
-}
-
-func (m *MockedFs) TempDir() string {
-	args := m.Called()
-	return args.String(0)
-}
-
-func (m *MockedFs) ReadFile(name string) ([]byte, error) {
-	args := m.Called(name)
-	return args.Get(0).([]byte), args.Error(1)
-}
-
 type StatusManagerTestSuite struct {
 	suite.Suite
 	simpleStatus    []Status

@@ -21,6 +21,7 @@ type IStatusManager interface {
 	mkdir()
 	writeToFile(status []Status)
 	GetFilePath() string
+	append(status Status)
 }
 
 type StatusManager struct {

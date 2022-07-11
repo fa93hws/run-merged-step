@@ -22,7 +22,12 @@ go_library(
 
 go_test(
     name = "cmd_test",
-    srcs = ["prepare_test.go", "status_manager_test.go"],
+    srcs = [
+        "prepare_test.go",
+        "run_test.go",
+        "status_manager_test.go",
+        "test_mocks.go",
+    ],
     data = glob(["fixtures/**/*.json"]),
     embed = [":cmd_lib"],
     deps = [

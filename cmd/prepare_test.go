@@ -8,23 +8,6 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type MockedStatusManager struct {
-	mock.Mock
-}
-
-func (m *MockedStatusManager) mkdir() {
-	m.Called()
-}
-
-func (m *MockedStatusManager) writeToFile(status []Status) {
-	m.Called(status)
-}
-
-func (m *MockedStatusManager) GetFilePath() string {
-	m.Called()
-	return ""
-}
-
 type PrepareTestSuit struct {
 	suite.Suite
 	mockedStatusManager *MockedStatusManager
