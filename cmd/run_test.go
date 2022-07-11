@@ -34,9 +34,7 @@ func (suite *RunCommandTestSuite) TestRunCommandExitZero() {
 		autoRevertable: false,
 		commands:       []string{"echo", "-n", "foo"},
 	}, suite.mockedStatusManager, suite.mockedLogger, suite.mockedExecService)
-	suite.mockedExecService.AssertCalled(suite.T(), "Run", "echo", []string{"-n", "foo"}, mock.MatchedBy(func(cwd *string) bool {
-		return cwd == nil
-	}), &map[string]string{
+	suite.mockedExecService.AssertCalled(suite.T(), "Run", "echo", []string{"-n", "foo"}, (*string)(nil), &map[string]string{
 		"DISABLE_UPLOAD_AUTO_REVERT_SIGNAL_FILE": "true",
 	})
 	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", mock.MatchedBy(func(message string) bool {
@@ -58,9 +56,7 @@ func (suite *RunCommandTestSuite) TestRunCommandExitNonZero() {
 		autoRevertable: true,
 		commands:       []string{"echo", "-n", "foo"},
 	}, suite.mockedStatusManager, suite.mockedLogger, suite.mockedExecService)
-	suite.mockedExecService.AssertCalled(suite.T(), "Run", "echo", []string{"-n", "foo"}, mock.MatchedBy(func(cwd *string) bool {
-		return cwd == nil
-	}), &map[string]string{
+	suite.mockedExecService.AssertCalled(suite.T(), "Run", "echo", []string{"-n", "foo"}, (*string)(nil), &map[string]string{
 		"DISABLE_UPLOAD_AUTO_REVERT_SIGNAL_FILE": "true",
 	})
 	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", mock.MatchedBy(func(message string) bool {
