@@ -23,21 +23,9 @@ func runCommand(commands []string) {
 	}
 }
 
-func getStatusFile(jobId string) string {
-	return path.Join(os.TempDir(), jobId, "merged_step_status.json")
-}
-
 func exists(file string) bool {
 	_, err := os.Stat(file)
 	return !errors.Is(err, os.ErrNotExist)
-}
-
-func readContent(file string) string {
-	content, err := os.ReadFile(file)
-	if err != nil {
-		panic(err)
-	}
-	return string(content)
 }
 
 func getBinaryPath() string {

@@ -13,6 +13,7 @@ import (
 
 type E2ETestSuite struct {
 	suite.Suite
+	tempDir    string
 	binPath    string
 	passScript string
 	failScript string
@@ -20,27 +21,17 @@ type E2ETestSuite struct {
 
 func (suite *E2ETestSuite) SetupSuite() {
 	currentDir, _ := os.Getwd()
+	suite.tempDir = path.Join(currentDir, "fixtures", "temp")
 	suite.binPath = getBinaryPath()
 	suite.passScript = path.Join(currentDir, "fixtures", "pass.sh")
 	suite.failScript = path.Join(currentDir, "fixtures", "fail.sh")
 }
 
-func (suite *E2ETestSuite) BeforeTest() {
-	tmpDir := os.TempDir()
-	dir, err := os.ReadDir(tmpDir)
-	if err != nil {
-		panic(err)
-	}
-	for _, d := range dir {
-		os.RemoveAll(path.Join([]string{tmpDir, d.Name()}...))
-	}
-}
-
 func (suite *E2ETestSuite) TestAllCommandsPass() {
 	jobId := "e2e-test-all-commands-pass"
-	runCommand([]string{suite.binPath, "--buildkite-job-id", jobId, "prepare"})
-	runCommand([]string{suite.binPath, "--buildkite-job-id", jobId, "run", "--label", "foo-label", "--key", "foo-key", "--auto-revertable", "--", suite.passScript})
-	runCommand([]string{suite.binPath, "--buildkite-job-id", jobId, "run", "--label", "bar-label", "--key", "bar-key", "--", suite.passScript})
+	runCommand([]string{suite.binPath, "--buildkite-job-id", jobId, "--temp-dir", suite.tempDir, "prepare"})
+	runCommand([]string{suite.binPath, "--buildkite-job-id", jobId, "--temp-dir", suite.tempDir, "run", "--label", "foo-label", "--key", "foo-key", "--auto-revertable", "--", suite.passScript})
+	runCommand([]string{suite.binPath, "--buildkite-job-id", jobId, "--temp-dir", suite.tempDir, "run", "--label", "bar-label", "--key", "bar-key", "--", suite.passScript})
 
 	fs := services.OsFs{}
 	statusManager := cmd.NewStatusManager(os.TempDir(), jobId, fs)
