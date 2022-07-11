@@ -28,6 +28,11 @@ func (m *MockedStatusManager) append(status Status) {
 	m.Called(status)
 }
 
+func (m *MockedStatusManager) Read() []Status {
+	args := m.Called()
+	return args.Get(0).([]Status)
+}
+
 // fs
 type MockedFs struct {
 	mock.Mock

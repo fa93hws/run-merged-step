@@ -11,10 +11,10 @@ import (
 var statusFileName = "merged_step_status.json"
 
 type Status struct {
-	Label          string `json:"label"`
-	Key            string `json:"key"`
-	ExitCode       int    `json:"exitCode"`
-	AutoRevertable bool   `json:"autoRevertable"`
+	Label          string `json:"label" jsonschema:"required"`
+	Key            string `json:"key" jsonschema:"required"`
+	ExitCode       int    `json:"exitCode" jsonschema:"required"`
+	AutoRevertable bool   `json:"autoRevertable" jsonschema:"required"`
 }
 
 type IStatusManager interface {
@@ -22,6 +22,7 @@ type IStatusManager interface {
 	writeToFile(status []Status)
 	GetFilePath() string
 	append(status Status)
+	Read() []Status
 }
 
 type StatusManager struct {

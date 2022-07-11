@@ -26,6 +26,7 @@ func init() {
 	rootCmd.MarkPersistentFlagDirname("temp-dir")
 	rootCmd.AddCommand(prepareCmd)
 	rootCmd.AddCommand(runCmd)
+	rootCmd.AddCommand(reportCmd)
 }
 
 func Execute() {

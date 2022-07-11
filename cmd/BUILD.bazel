@@ -5,6 +5,7 @@ go_library(
     srcs = [
         "prepare.go",
         "status_manager.go",
+        "report.go",
         "root.go",
         "run.go",
     ],
@@ -24,6 +25,7 @@ go_test(
     name = "cmd_test",
     srcs = [
         "prepare_test.go",
+        "report_test.go",
         "run_test.go",
         "status_manager_test.go",
         "test_mocks.go",
