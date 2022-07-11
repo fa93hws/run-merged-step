@@ -24,7 +24,7 @@ var (
 		Short: "Run the CI step as a command",
 		Run: func(cmd *cobra.Command, args []string) {
 			logger := services.NewLogger()
-			execService := services.NewExecService(nil)
+			execService := &services.ExecService{}
 			osFs := &services.OsFs{}
 			statusManager := NewStatusManager(tempDir, buildkiteJobId, osFs)
 			run(RunParams{label, key, autoRevertable, args}, statusManager, logger, execService)
@@ -46,7 +46,7 @@ func run(params RunParams, statusManager IStatusManager, logger services.ILogger
 	logger.LogSection(fmt.Sprintf("Running %s", params.label), false)
 	startTime := time.Now()
 	commands := params.commands
-	exitCode := exec.Run(commands[0], commands[1:])
+	exitCode := exec.Run(commands[0], commands[1:], nil)
 
 	var icon string
 	if exitCode == 0 {

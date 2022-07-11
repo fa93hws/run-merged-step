@@ -6,21 +6,15 @@ import (
 )
 
 type IExecService interface {
-	Run(program string, args []string) int
+	Run(program string, args []string, cwd *string) int
 }
 
-type ExecService struct {
-	cwd *string
-}
+type ExecService struct{}
 
-func NewExecService(cwd *string) *ExecService {
-	return &ExecService{cwd}
-}
-
-func (e *ExecService) Run(program string, args []string) int {
+func (e *ExecService) Run(program string, args []string, cwd *string) int {
 	cmd := exec.Command(program, args...)
-	if e.cwd != nil {
-		cmd.Dir = *e.cwd
+	if cwd != nil {
+		cmd.Dir = *cwd
 	}
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout

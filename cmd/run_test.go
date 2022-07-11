@@ -27,14 +27,16 @@ func (suite *RunCommandTestSuite) SetupTest() {
 }
 
 func (suite *RunCommandTestSuite) TestRunCommandExitZero() {
-	suite.mockedExecService.On("Run", mock.Anything, mock.Anything).Return(0).Once()
+	suite.mockedExecService.On("Run", mock.Anything, mock.Anything, mock.Anything).Return(0).Once()
 	run(RunParams{
 		label:          "foo-label",
 		key:            "foo-key",
 		autoRevertable: false,
 		commands:       []string{"echo", "-n", "foo"},
 	}, suite.mockedStatusManager, suite.mockedLogger, suite.mockedExecService)
-	suite.mockedExecService.AssertCalled(suite.T(), "Run", "echo", []string{"-n", "foo"})
+	suite.mockedExecService.AssertCalled(suite.T(), "Run", "echo", []string{"-n", "foo"}, mock.MatchedBy(func(cwd *string) bool {
+		return cwd == nil
+	}))
 	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", mock.MatchedBy(func(message string) bool {
 		return strings.Contains(message, ":bk-status-passed:")
 	}), false)
@@ -47,14 +49,16 @@ func (suite *RunCommandTestSuite) TestRunCommandExitZero() {
 }
 
 func (suite *RunCommandTestSuite) TestRunCommandExitNonZero() {
-	suite.mockedExecService.On("Run", mock.Anything, mock.Anything).Return(3).Once()
+	suite.mockedExecService.On("Run", mock.Anything, mock.Anything, mock.Anything).Return(3).Once()
 	run(RunParams{
 		label:          "bar-label",
 		key:            "bar-key",
 		autoRevertable: true,
 		commands:       []string{"echo", "-n", "foo"},
 	}, suite.mockedStatusManager, suite.mockedLogger, suite.mockedExecService)
-	suite.mockedExecService.AssertCalled(suite.T(), "Run", "echo", []string{"-n", "foo"})
+	suite.mockedExecService.AssertCalled(suite.T(), "Run", "echo", []string{"-n", "foo"}, mock.MatchedBy(func(cwd *string) bool {
+		return cwd == nil
+	}))
 	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", mock.MatchedBy(func(message string) bool {
 		return strings.Contains(message, ":bk-status-failed:")
 	}), false)

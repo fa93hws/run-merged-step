@@ -13,8 +13,8 @@ import (
 func runCommand(commands []string) {
 	currentDir, _ := os.Getwd()
 	repoRootDir := filepath.Dir(currentDir)
-	execService := services.NewExecService(&repoRootDir)
-	exitCode := execService.Run(commands[0], commands[1:])
+	execService := &services.ExecService{}
+	exitCode := execService.Run(commands[0], commands[1:], &repoRootDir)
 	if exitCode != 0 {
 		panic(fmt.Sprintf("command %s failed with exit code %d", commands, exitCode))
 	}
