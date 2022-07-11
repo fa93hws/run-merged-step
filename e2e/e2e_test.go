@@ -32,6 +32,10 @@ func (suite *E2ETestSuite) SetupSuite() {
 	suite.failScript = path.Join(currentDir, "fixtures", "fail.sh")
 }
 
+func (suite *E2ETestSuite) SetupTest() {
+	os.RemoveAll(suite.tempDir)
+}
+
 func (suite *E2ETestSuite) TestAllCommandsPass() {
 	jobId := "e2e-test-all-commands-pass"
 	runCommand([]string{suite.binPath, "--buildkite-job-id", jobId, "--temp-dir", suite.tempDir, "prepare"})
@@ -39,7 +43,7 @@ func (suite *E2ETestSuite) TestAllCommandsPass() {
 	runCommand([]string{suite.binPath, "--buildkite-job-id", jobId, "--temp-dir", suite.tempDir, "run", "--label", "bar-label", "--key", "bar-key", "--", suite.passScript})
 
 	fs := services.OsFs{}
-	statusManager := cmd.NewStatusManager(os.TempDir(), jobId, fs)
+	statusManager := cmd.NewStatusManager(suite.tempDir, jobId, fs)
 	assert.True(suite.T(), exists(statusManager.GetFilePath()), "status file should exist")
 	statuses := statusManager.Read()
 	assert.Equal(suite.T(), statuses, []cmd.Status{{
