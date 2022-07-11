@@ -36,4 +36,5 @@ go_test(
         "@com_github_stretchr_testify//mock:go_default_library",
         "@com_github_stretchr_testify//suite:go_default_library",
     ],
+    tags = ["unit"]
 )

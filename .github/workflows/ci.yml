@@ -22,6 +22,8 @@ jobs:
           bazel run //:gazelle-update-repos
           git diff HEAD --exit-code WORKSPACE deps.bzl
       - name: Unit test
-        run: bazel test //...
+        run: bazel test //... --test_tag_filters=unit
+      - name: E2E test
+        run: bazel test //... --test_tag_filters=e2e
       - name: Build
         run: bazel build //...
