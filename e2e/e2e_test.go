@@ -25,17 +25,15 @@ func (suite *E2ETestSuite) SetupSuite() {
 	suite.binPath = getBinaryPath()
 	suite.passScript = path.Join(currentDir, "fixtures", "pass.sh")
 	suite.failScript = path.Join(currentDir, "fixtures", "fail.sh")
-}
-
-func (suite *E2ETestSuite) SetupTest() {
 	os.RemoveAll(suite.tempDir)
 }
 
 func (suite *E2ETestSuite) TestAllCommandsPass() {
-	jobId := "e2e-test-all-commands-pass"
-	runCommand([]string{suite.binPath, "--buildkite-job-id", jobId, "--temp-dir", suite.tempDir, "prepare"})
-	runCommand([]string{suite.binPath, "--buildkite-job-id", jobId, "--temp-dir", suite.tempDir, "run", "--label", "foo-label", "--key", "foo-key", "--auto-revertable", "--", suite.passScript})
-	runCommand([]string{suite.binPath, "--buildkite-job-id", jobId, "--temp-dir", suite.tempDir, "run", "--label", "bar-label", "--key", "bar-key", "--", suite.passScript})
+	jobId := "all-commands-pass"
+	commonArgs := []string{suite.binPath, "--buildkite-job-id", jobId, "--temp-dir", suite.tempDir}
+	runCommand(append(commonArgs, "prepare"))
+	runCommand(append(commonArgs, "run", "--label", "foo-label", "--key", "foo-key", "--auto-revertable", "--", suite.passScript))
+	runCommand(append(commonArgs, "run", "--label", "bar-label", "--key", "bar-key", "--", suite.passScript))
 
 	fs := services.OsFs{}
 	statusManager := cmd.NewStatusManager(suite.tempDir, jobId, fs)
@@ -45,6 +43,56 @@ func (suite *E2ETestSuite) TestAllCommandsPass() {
 		Label:          "foo-label",
 		Key:            "foo-key",
 		ExitCode:       0,
+		AutoRevertable: true,
+	}, {
+		Label:          "bar-label",
+		Key:            "bar-key",
+		ExitCode:       0,
+		AutoRevertable: false,
+	},
+	})
+}
+
+func (suite *E2ETestSuite) TestSomeCommandsFail() {
+	jobId := "some-commands-failed"
+	commonArgs := []string{suite.binPath, "--buildkite-job-id", jobId, "--temp-dir", suite.tempDir}
+	runCommand(append(commonArgs, "prepare"))
+	runCommand(append(commonArgs, "run", "--label", "foo-label", "--key", "foo-key", "--auto-revertable", "--", suite.passScript))
+	runCommand(append(commonArgs, "run", "--label", "bar-label", "--key", "bar-key", "--", suite.failScript))
+
+	fs := services.OsFs{}
+	statusManager := cmd.NewStatusManager(suite.tempDir, jobId, fs)
+	assert.True(suite.T(), exists(statusManager.GetFilePath()), "status file should exist")
+	statuses := statusManager.Read()
+	assert.Equal(suite.T(), statuses, []cmd.Status{{
+		Label:          "foo-label",
+		Key:            "foo-key",
+		ExitCode:       0,
+		AutoRevertable: true,
+	}, {
+		Label:          "bar-label",
+		Key:            "bar-key",
+		ExitCode:       1,
+		AutoRevertable: false,
+	},
+	})
+}
+
+func (suite *E2ETestSuite) TestSomeAutoRevertableCommandsFail() {
+	jobId := "some-auto-revertable-commands-failed"
+	commonArgs := []string{suite.binPath, "--buildkite-job-id", jobId, "--temp-dir", suite.tempDir}
+	runCommand(append(commonArgs, "prepare"))
+	runCommand(append(commonArgs, "run", "--label", "foo-label", "--key", "foo-key", "--auto-revertable", "--", suite.failScript))
+	runCommand(append(commonArgs, "run", "--label", "bar-label", "--key", "bar-key", "--", suite.passScript))
+
+	fs := services.OsFs{}
+	statusManager := cmd.NewStatusManager(suite.tempDir, jobId, fs)
+	assert.True(suite.T(), exists(statusManager.GetFilePath()), "status file should exist")
+	statuses := statusManager.Read()
+	assert.Equal(suite.T(), statuses, []cmd.Status{{
+		Label:          "foo-label",
+		Key:            "foo-key",
+		ExitCode:       1,
 		AutoRevertable: true,
 	}, {
 		Label:          "bar-label",
