@@ -4,22 +4,19 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 	"path"
 	"path/filepath"
+
+	"github.com/fa93hws/run-merged-step/services"
 )
 
 func runCommand(commands []string) {
 	currentDir, _ := os.Getwd()
 	repoRootDir := filepath.Dir(currentDir)
-	cmd := exec.Command(commands[0], commands[1:]...)
-	cmd.Dir = repoRootDir
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
-	cmd.Stdin = os.Stdin
-	err := cmd.Run()
-	if err != nil {
-		panic(err)
+	execService := services.NewExecService(&repoRootDir)
+	exitCode := execService.Run(commands[0], commands[1:])
+	if exitCode != 0 {
+		panic(fmt.Sprintf("command %s failed with exit code %d", commands, exitCode))
 	}
 }
 
