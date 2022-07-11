@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 	"testing"
@@ -21,12 +20,8 @@ type E2ETestSuite struct {
 }
 
 func (suite *E2ETestSuite) SetupSuite() {
-	tempDir, err := ioutil.TempDir("", "run_merged_step_e2e_")
-	if err != nil {
-		panic(err)
-	}
-	suite.tempDir = tempDir
 	currentDir, _ := os.Getwd()
+	suite.tempDir = path.Join(currentDir, "fixtures", "temp")
 	suite.binPath = getBinaryPath()
 	suite.passScript = path.Join(currentDir, "fixtures", "pass.sh")
 	suite.failScript = path.Join(currentDir, "fixtures", "fail.sh")
