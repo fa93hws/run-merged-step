@@ -10,7 +10,7 @@ var prepareCmd = &cobra.Command{
 	Use:   "prepare",
 	Short: "Preparation work for running merged step",
 	Run: func(cmd *cobra.Command, args []string) {
-		statusManager := NewStatusManager(buildkiteJobId, &services.OsFs{})
+		statusManager := NewStatusManager(tempDir, buildkiteJobId, &services.OsFs{})
 		logger := services.NewLogger()
 		prepare(statusManager, logger)
 	},

@@ -9,6 +9,7 @@ import (
 )
 
 var buildkiteJobId string
+var tempDir string
 var rootCmd = &cobra.Command{
 	Use:   "run-merged-step",
 	Short: "to execute merged step",
@@ -21,6 +22,8 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.PersistentFlags().StringVar(&buildkiteJobId, "buildkite-job-id", "", "buildkite job id (required)")
 	rootCmd.MarkPersistentFlagRequired("buildkite-job-id")
+	rootCmd.PersistentFlags().StringVar(&tempDir, "temp-dir", os.TempDir(), "temp dir (default to os temp dir)")
+	rootCmd.MarkPersistentFlagDirname("temp-dir")
 	rootCmd.AddCommand(prepareCmd)
 	rootCmd.AddCommand(runCmd)
 }

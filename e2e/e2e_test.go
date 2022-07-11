@@ -43,7 +43,7 @@ func (suite *E2ETestSuite) TestAllCommandsPass() {
 	runCommand([]string{suite.binPath, "--buildkite-job-id", jobId, "run", "--label", "bar-label", "--key", "bar-key", "--", suite.passScript})
 
 	fs := services.OsFs{}
-	statusManager := cmd.NewStatusManager(jobId, fs)
+	statusManager := cmd.NewStatusManager(os.TempDir(), jobId, fs)
 	assert.True(suite.T(), exists(statusManager.GetFilePath()), "status file should exist")
 	statuses := statusManager.Read()
 	assert.Equal(suite.T(), statuses, []cmd.Status{{

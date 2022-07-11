@@ -42,7 +42,7 @@ func (suite *StatusManagerTestSuite) SetupTest() {
 }
 
 func (suite *StatusManagerTestSuite) TestStatusFilePath() {
-	manager := NewStatusManager("job-id", suite.mockedFs)
+	manager := NewStatusManager("/tmp", "job-id", suite.mockedFs)
 	assert.Equal(suite.T(), "/tmp/job-id/merged_step_status.json", manager.filePath)
 }
 

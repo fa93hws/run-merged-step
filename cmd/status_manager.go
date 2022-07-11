@@ -29,8 +29,8 @@ type StatusManager struct {
 	fs       services.IFileService
 }
 
-func NewStatusManager(buildkiteJobId string, fs services.IFileService) *StatusManager {
-	filePath := path.Join(fs.TempDir(), buildkiteJobId, statusFileName)
+func NewStatusManager(tempDir string, buildkiteJobId string, fs services.IFileService) *StatusManager {
+	filePath := path.Join(tempDir, buildkiteJobId, statusFileName)
 	return &StatusManager{filePath, fs}
 }
 

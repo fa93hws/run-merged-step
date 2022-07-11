@@ -26,7 +26,7 @@ var (
 			logger := services.NewLogger()
 			execService := services.NewExecService(nil)
 			osFs := &services.OsFs{}
-			statusManager := NewStatusManager(buildkiteJobId, osFs)
+			statusManager := NewStatusManager(tempDir, buildkiteJobId, osFs)
 			run(RunParams{label, key, autoRevertable, args}, statusManager, logger, execService)
 		},
 	}
