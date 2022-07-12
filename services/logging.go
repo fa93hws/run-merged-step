@@ -8,7 +8,8 @@ import (
 )
 
 type ILogger interface {
-	LogSection(string, bool)
+	LogSection(string)
+	LogCollapsedSection(string)
 	LogInfo(string)
 }
 
@@ -22,19 +23,22 @@ func NewLogger() *Logger {
 	return &Logger{isOnBuildkite}
 }
 
-func (b Logger) LogSection(text string, collapsed bool) {
+func (b Logger) LogSection(text string) {
 	sprintf := color.New(color.Bold, color.FgMagenta).SprintfFunc()
 	if !b.isOnBuildkite {
-		fmt.Fprintln(os.Stderr, sprintf("%s\n", text))
+		b.LogInfo(sprintf(text))
 		return
 	}
-	var section string
-	if collapsed {
-		section = "---"
-	} else {
-		section = "+++"
+	b.LogInfo(fmt.Sprintf("+++ %s", sprintf("%s", text)))
+}
+
+func (b Logger) LogCollapsedSection(text string) {
+	sprintf := color.New(color.Bold, color.FgMagenta).SprintfFunc()
+	if !b.isOnBuildkite {
+		b.LogInfo(sprintf(text))
+		return
 	}
-	fmt.Fprintf(os.Stderr, "%s %s", section, sprintf("%s\n", text))
+	b.LogInfo(fmt.Sprintf("--- %s", sprintf("%s", text)))
 }
 
 func (b Logger) LogInfo(text string) {
@@ -43,5 +47,6 @@ func (b Logger) LogInfo(text string) {
 
 type FakeLogger struct{}
 
-func (f FakeLogger) LogSection(string, bool) {}
-func (f FakeLogger) LogInfo(string)          {}
+func (f FakeLogger) LogSection(string)          {}
+func (f FakeLogger) LogCollapsedSection(string) {}
+func (f FakeLogger) LogInfo(string)             {}

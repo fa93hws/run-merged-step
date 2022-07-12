@@ -17,7 +17,7 @@ var prepareCmd = &cobra.Command{
 }
 
 func prepare(statusManager IStatusManager, logger services.ILogger) {
-	logger.LogSection("Creating status file", false)
+	logger.LogSection("Creating status file")
 	statusManager.mkdir()
 	statusManager.writeToFile([]Status{})
 	color.Green("Status file created at %s", statusManager.GetFilePath())

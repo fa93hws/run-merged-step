@@ -82,8 +82,12 @@ type MockedLogger struct {
 	mock.Mock
 }
 
-func (m *MockedLogger) LogSection(text string, collapse bool) {
-	m.Called(text, collapse)
+func (m *MockedLogger) LogSection(text string) {
+	m.Called(text)
+}
+
+func (m *MockedLogger) LogCollapsedSection(text string) {
+	m.Called(text)
 }
 
 func (m *MockedLogger) LogInfo(text string) {

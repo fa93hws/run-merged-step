@@ -48,11 +48,11 @@ func hasAutoRevertable(statuses []Status) bool {
 
 func printResult(failedStatuses []Status, logger services.ILogger) {
 	if len(failedStatuses) == 0 {
-		logger.LogSection(":bk-status-passed: All step passed", false)
+		logger.LogSection(":bk-status-passed: All step passed")
 	}
-	logger.LogSection(":bk-status-failed: Some steps failed", false)
+	logger.LogSection(":bk-status-failed: Some steps failed")
 	for _, failedStatus := range failedStatuses {
-		logger.LogInfo(fmt.Sprintf("%s failed with exit code=%d\n", failedStatus.Label, failedStatus.ExitCode))
+		logger.LogInfo(fmt.Sprintf("%s failed with exit code=%d", failedStatus.Label, failedStatus.ExitCode))
 	}
 }
 
@@ -73,7 +73,7 @@ func report(statusManager IStatusManager, autoRevertableScriptPath string, logge
 		}
 	}
 
-	logger.LogSection("Print status file", true)
+	logger.LogCollapsedSection("Print status file")
 	jsonBytes, _ := json.MarshalIndent(statuses, "", "  ")
 	logger.LogInfo(string(jsonBytes))
 	statusManager.remove()

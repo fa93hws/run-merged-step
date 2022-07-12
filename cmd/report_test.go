@@ -30,7 +30,8 @@ func (suite *ReportTestSuite) SetupTest() {
 	suite.mockedStatusManager.On("remove").Return()
 
 	suite.mockedLogger = &MockedLogger{}
-	suite.mockedLogger.On("LogSection", mock.Anything, mock.Anything).Return()
+	suite.mockedLogger.On("LogSection", mock.Anything).Return()
+	suite.mockedLogger.On("LogCollapsedSection", mock.Anything).Return()
 	suite.mockedLogger.On("LogInfo", mock.Anything).Return()
 
 	suite.mockedExecService = &MockedExecService{}
@@ -46,7 +47,7 @@ func (suite *ReportTestSuite) TestAllNonAutoRevertableCommandsPass() {
 	suite.mockedStatusManager.On("Read").Return(statuses).Once()
 	exitCode := report(suite.mockedStatusManager, "upload_auto_revert_signal", suite.mockedLogger, suite.mockedExecService)
 	suite.Equal(0, exitCode)
-	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", ":bk-status-passed: All step passed", false)
+	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", ":bk-status-passed: All step passed")
 	suite.mockedExecService.AssertNotCalled(suite.T(), "Run")
 }
 
@@ -59,7 +60,7 @@ func (suite *ReportTestSuite) TestAllAutoRevertableCommandsPass() {
 	suite.mockedStatusManager.On("Read").Return(statuses).Once()
 	exitCode := report(suite.mockedStatusManager, "upload_auto_revert_signal", suite.mockedLogger, suite.mockedExecService)
 	suite.Equal(0, exitCode)
-	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", ":bk-status-passed: All step passed", false)
+	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", ":bk-status-passed: All step passed")
 	suite.mockedExecService.AssertCalled(suite.T(), "Run", "upload_auto_revert_signal", []string{"passed"}, (*string)(nil), (*map[string]string)(nil))
 }
 
@@ -72,7 +73,7 @@ func (suite *ReportTestSuite) TestSomeNonAutoRevertableCommandsFail() {
 	suite.mockedStatusManager.On("Read").Return(statuses).Once()
 	exitCode := report(suite.mockedStatusManager, "upload_auto_revert_signal", suite.mockedLogger, suite.mockedExecService)
 	suite.Equal(1, exitCode)
-	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", ":bk-status-failed: Some steps failed", false)
+	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", ":bk-status-failed: Some steps failed")
 	suite.mockedExecService.AssertNotCalled(suite.T(), "Run")
 }
 
@@ -85,7 +86,7 @@ func (suite *ReportTestSuite) TestSomeAutoRevertableCommandsFail() {
 	suite.mockedStatusManager.On("Read").Return(statuses).Once()
 	exitCode := report(suite.mockedStatusManager, "upload_auto_revert_signal", suite.mockedLogger, suite.mockedExecService)
 	suite.Equal(1, exitCode)
-	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", ":bk-status-failed: Some steps failed", false)
+	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", ":bk-status-failed: Some steps failed")
 	suite.mockedExecService.AssertCalled(suite.T(), "Run", "upload_auto_revert_signal", []string{"failed"}, (*string)(nil), (*map[string]string)(nil))
 }
 
@@ -98,7 +99,7 @@ func (suite *ReportTestSuite) TestSomeNonAutoRevertableCommandsFailButAutoRevert
 	suite.mockedStatusManager.On("Read").Return(statuses).Once()
 	exitCode := report(suite.mockedStatusManager, "upload_auto_revert_signal", suite.mockedLogger, suite.mockedExecService)
 	suite.Equal(1, exitCode)
-	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", ":bk-status-failed: Some steps failed", false)
+	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", ":bk-status-failed: Some steps failed")
 	suite.mockedExecService.AssertCalled(suite.T(), "Run", "upload_auto_revert_signal", []string{"passed"}, (*string)(nil), (*map[string]string)(nil))
 }
 

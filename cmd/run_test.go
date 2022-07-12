@@ -23,7 +23,7 @@ func (suite *RunCommandTestSuite) SetupTest() {
 	suite.mockedStatusManager.On("append", mock.Anything)
 
 	suite.mockedLogger = &MockedLogger{}
-	suite.mockedLogger.On("LogSection", mock.Anything, mock.Anything)
+	suite.mockedLogger.On("LogSection", mock.Anything)
 }
 
 func (suite *RunCommandTestSuite) TestRunCommandExitZero() {
@@ -39,7 +39,7 @@ func (suite *RunCommandTestSuite) TestRunCommandExitZero() {
 	})
 	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", mock.MatchedBy(func(message string) bool {
 		return strings.Contains(message, ":bk-status-passed:")
-	}), false)
+	}))
 	suite.mockedStatusManager.AssertCalled(suite.T(), "append", Status{
 		Label:          "foo-label",
 		Key:            "foo-key",
@@ -61,7 +61,7 @@ func (suite *RunCommandTestSuite) TestRunCommandExitNonZero() {
 	})
 	suite.mockedLogger.AssertCalled(suite.T(), "LogSection", mock.MatchedBy(func(message string) bool {
 		return strings.Contains(message, ":bk-status-failed:")
-	}), false)
+	}))
 	suite.mockedStatusManager.AssertCalled(suite.T(), "append", Status{
 		Label:          "bar-label",
 		Key:            "bar-key",

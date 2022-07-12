@@ -43,7 +43,7 @@ func run(params RunParams, statusManager IStatusManager, logger services.ILogger
 	if len(params.commands) == 0 {
 		panic("need commands to run")
 	}
-	logger.LogSection(fmt.Sprintf("Running %s", params.label), false)
+	logger.LogSection(fmt.Sprintf("Running %s", params.label))
 	startTime := time.Now()
 	commands := params.commands
 	exitCode := exec.Run(commands[0], commands[1:], nil, &map[string]string{
@@ -57,7 +57,7 @@ func run(params RunParams, statusManager IStatusManager, logger services.ILogger
 		icon = ":bk-status-failed:"
 	}
 	elapsedTime := time.Since(startTime).Seconds()
-	logger.LogSection(fmt.Sprintf("%s Finished %s in %.2f seconds\n", icon, params.label, elapsedTime), false)
+	logger.LogSection(fmt.Sprintf("%s Finished %s in %.2f seconds", icon, params.label, elapsedTime))
 	status := Status{Label: params.label, Key: params.key, ExitCode: exitCode, AutoRevertable: params.autoRevertable}
 	statusManager.append(status)
 }
